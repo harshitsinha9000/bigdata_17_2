@@ -1,0 +1,113 @@
+
+-------------------------------------------------------------------------
+query 1
+
+hbase(main):017:0> create 'clicks',{NAME=>'hits',VERSIONS=>5}
+0 row(s) in 0.4340 seconds
+
+=> Hbase::Table - clicks
+hbase(main):018:0> describe 'clicks'
+Table clicks is ENABLED                                                                                                
+clicks                                                                                                                 
+COLUMN FAMILIES DESCRIPTION                                                                                            
+{NAME => 'hits', BLOOMFILTER => 'ROW', VERSIONS => '5', IN_MEMORY => 'false', KEEP_DELETED_CELLS => 'FALSE', DATA_BLOCK
+_ENCODING => 'NONE', TTL => 'FOREVER', COMPRESSION => 'NONE', MIN_VERSIONS => '0', BLOCKCACHE => 'true', BLOCKSIZE => '
+65536', REPLICATION_SCOPE => '0'}                                                                                      
+1 row(s) in 0.0790 seconds
+
+
+-------------------------------------------------------------------------
+query 2
+
+put 'clicks','click1','hits:h1','hello'
+
+hbase(main):004:0> put 'clicks','click1','hits:h1','hello'
+0 row(s) in 0.1840 seconds
+
+hbase(main):005:0> scan 'clicks'
+ROW                   COLUMN+CELL                                               
+ click1               column=hits:h1, timestamp=1493999444550, value=hello      
+1 row(s) in 0.0400 seconds
+
+hbase(main):006:0> put 'clicks','click1','hits:h2','hello'
+0 row(s) in 0.0360 seconds
+
+hbase(main):007:0> scan 'clicks'
+ROW                   COLUMN+CELL                                               
+ click1               column=hits:h1, timestamp=1493999444550, value=hello      
+ click1               column=hits:h2, timestamp=1493999459702, value=hello      
+1 row(s) in 0.0350 seconds
+
+
+
+put 'clicks','click1','hits:h2','hello'
+0 row(s) in 0.0360 seconds
+
+hbase(main):007:0> scan 'clicks'
+ROW                   COLUMN+CELL                                               
+ click1               column=hits:h1, timestamp=1493999444550, value=hello      
+ click1               column=hits:h2, timestamp=1493999459702, value=hello      
+1 row(s) in 0.0350 seconds
+
+hbase(main):008:0> put 'clicks','click1','hits:h1','hello2'
+0 row(s) in 0.0200 seconds
+
+hbase(main):009:0> put 'clicks','click1','hits:h1','hello3'
+0 row(s) in 0.0220 seconds
+
+hbase(main):010:0> put 'clicks','click1','hits:h1','hello4'
+0 row(s) in 0.0120 seconds
+
+hbase(main):011:0> put 'clicks','click1','hits:h1','hello5'
+0 row(s) in 0.0110 seconds
+
+hbase(main):012:0> put 'clicks','click1','hits:h1','hello6'
+0 row(s) in 0.0140 seconds
+
+hbase(main):013:0> scan 'clicks'
+ROW                   COLUMN+CELL                                               
+ click1               column=hits:h1, timestamp=1493999633011, value=hello6     
+ click1               column=hits:h2, timestamp=1493999459702, value=hello      
+1 row(s) in 0.0240 seconds
+
+hbase(main):014:0> scan 'clicks',VERSION=>5
+ROW                   COLUMN+CELL                                               
+ click1               column=hits:h1, timestamp=1493999633011, value=hello6     
+ click1               column=hits:h2, timestamp=1493999459702, value=hello      
+1 row(s) in 0.0470 seconds
+
+hbase(main):015:0> scan 'clicks',{VERSIONS=>5}
+ROW                   COLUMN+CELL                                               
+ click1               column=hits:h1, timestamp=1493999633011, value=hello6     
+ click1               column=hits:h1, timestamp=1493999630443, value=hello5     
+ click1               column=hits:h1, timestamp=1493999627300, value=hello4     
+ click1               column=hits:h1, timestamp=1493999623886, value=hello3     
+ click1               column=hits:h1, timestamp=1493999619705, value=hello2     
+ click1               column=hits:h2, timestamp=1493999459702, value=hello      
+1 row(s) in 0.0510 seconds
+
+hbase(main):016:0> scan 'clicks',{VERSIONS=>6}
+ROW                   COLUMN+CELL                                               
+ click1               column=hits:h1, timestamp=1493999633011, value=hello6     
+ click1               column=hits:h1, timestamp=1493999630443, value=hello5     
+ click1               column=hits:h1, timestamp=1493999627300, value=hello4     
+ click1               column=hits:h1, timestamp=1493999623886, value=hello3     
+ click1               column=hits:h1, timestamp=1493999619705, value=hello2     
+ click1               column=hits:h2, timestamp=1493999459702, value=hello      
+1 row(s) in 0.0930 seconds
+
+hbase(main):017:0> scan 'clicks',{VERSIONS=>2}
+ROW                   COLUMN+CELL                                               
+ click1               column=hits:h1, timestamp=1493999633011, value=hello6     
+ click1               column=hits:h1, timestamp=1493999630443, value=hello5     
+ click1               column=hits:h2, timestamp=1493999459702, value=hello      
+1 row(s) in 0.0380 seconds
+
+
+
+
+
+
+
+
+
